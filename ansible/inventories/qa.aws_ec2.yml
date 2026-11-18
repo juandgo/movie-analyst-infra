@@ -1,7 +1,7 @@
 # Dynamic inventory: discovers this environment's instances through the EC2 API (bastion IAM role).
 plugin: amazon.aws.aws_ec2
 regions:
-  - us-east-1
+  - us-east-2
 filters:
   tag:Environment: qa
   instance-state-name: running
