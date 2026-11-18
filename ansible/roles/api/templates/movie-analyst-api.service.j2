@@ -1,0 +1,17 @@
+[Unit]
+Description=Movie Analyst API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User={{ app_user }}
+WorkingDirectory=/opt/movie-analyst-api
+EnvironmentFile=/etc/movie-analyst-api.env
+ExecStart={{ node_bin }} server.js
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/movie-analyst-api.log
+StandardError=append:/var/log/movie-analyst-api.log
+
+[Install]
+WantedBy=multi-user.target

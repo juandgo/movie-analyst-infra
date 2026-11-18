@@ -1,0 +1,113 @@
+diff -ru orig/movie-analyst-api/package.json fixed/movie-analyst-api/package.json
+--- orig/movie-analyst-api/package.json	2026-11-12 22:52:26.991339663 +0000
++++ fixed/movie-analyst-api/package.json	2026-11-12 22:52:27.001341191 +0000
+@@ -21,7 +21,7 @@
+     "auth0-api-jwt-rsa-validation": "0.0.1",
+     "express": "^4.15.2",
+     "express-jwt": "^5.3.0",
+-    "mysql": "^2.14.1"
++    "mysql2": "^3.11.0"
+   },
+   "devDependencies": {
+     "mocha": "^3.3.0",
+diff -ru orig/movie-analyst-api/seeds.js fixed/movie-analyst-api/seeds.js
+--- orig/movie-analyst-api/seeds.js	2026-11-12 22:52:26.991478970 +0000
++++ fixed/movie-analyst-api/seeds.js	2026-11-12 22:52:27.000009410 +0000
+@@ -1,4 +1,4 @@
+-const mysql = require('mysql')
++const mysql = require('mysql2')
+ const util = require('util')
+ 
+ async function main () {
+diff -ru orig/movie-analyst-api/server.js fixed/movie-analyst-api/server.js
+--- orig/movie-analyst-api/server.js	2026-11-12 22:52:26.991492122 +0000
++++ fixed/movie-analyst-api/server.js	2026-11-12 22:52:26.999666581 +0000
+@@ -1,7 +1,7 @@
+ // Get our dependencies
+ const express = require('express')
+ const app = express()
+-const mysql = require('mysql')
++const mysql = require('mysql2')
+ const util = require('util')
+ 
+ const pool = mysql.createPool({
+@@ -22,7 +22,7 @@
+     res.json(rows)
+   } catch (err) {
+     console.error('API Error:', err)
+-    res.staus(500).send({'msg': 'Internal server error'})
++    res.status(500).send({'msg': 'Internal server error'})
+   }
+ })
+ 
+@@ -32,7 +32,7 @@
+     res.json(rows)
+   } catch (err) {
+     console.error('API Error:', err)
+-    res.staus(500).send({'msg': 'Internal server error'})
++    res.status(500).send({'msg': 'Internal server error'})
+   }
+ })
+ 
+@@ -42,21 +42,21 @@
+     res.json(rows)
+   } catch (err) {
+     console.error('API Error:', err)
+-    res.staus(500).send({'msg': 'Internal server error'})
++    res.status(500).send({'msg': 'Internal server error'})
+   }
+ })
+ 
+ app.get('/pending', async function (req, res) {
+   try {
+     const rows = await pool.query(
+-      'select m.title, m.release, m.score, r.name as reviewer, p.name as publication' +
+-      'from movie_db.movies m, movie_db.reviewers r, movie_db.publications p where' +
+-      'r.publication=p.name and m.reviewer=r.name and m.release>=2017'
++      'select m.title, m.release_year, m.score, r.name as reviewer, p.name as publication ' +
++      'from movies m, reviewers r, publications p where ' +
++      'r.publication=p.name and m.reviewer=r.name and m.release_year>=2017'
+     )
+     res.json(rows)
+   } catch (err) {
+     console.error('API Error:', err)
+-    res.staus(500).send({'msg': 'Internal server error'})
++    res.status(500).send({'msg': 'Internal server error'})
+   }
+ })
+ 
+diff -ru orig/movie-analyst-ui/server.js fixed/movie-analyst-ui/server.js
+--- orig/movie-analyst-ui/server.js	2026-11-12 22:52:26.992085412 +0000
++++ fixed/movie-analyst-ui/server.js	2026-11-12 22:52:27.002743405 +0000
+@@ -25,6 +25,7 @@
+   request
+     .get(`http://${backend_url}/movies`)
+     .end(function(err, data) {
++      if (err || !data) { return res.status(502).send("Backend unavailable"); }
+       if(data.status == 403){
+         res.send(403, '403 Forbidden');
+       } else {
+@@ -41,6 +42,7 @@
+     .get(`http://${backend_url}/reviewers`)
+     .set('Authorization', 'Bearer ' + req.access_token)
+     .end(function(err, data) {
++      if (err || !data) { return res.status(502).send("Backend unavailable"); }
+       if(data.status == 403){
+         res.send(403, '403 Forbidden');
+       } else {
+@@ -54,6 +56,7 @@
+   request
+     .get(`http://${backend_url}/publications`)
+     .end(function(err, data) {
++      if (err || !data) { return res.status(502).send("Backend unavailable"); }
+       if(data.status == 403){
+         res.send(403, '403 Forbidden');
+       } else {
+@@ -68,6 +71,7 @@
+   request
+     .get(`http://${backend_url}/pending`)
+     .end(function(err, data) {
++      if (err || !data) { return res.status(502).send("Backend unavailable"); }
+       if(data.status == 403){
+         res.send(403, '403 Forbidden');
+       }

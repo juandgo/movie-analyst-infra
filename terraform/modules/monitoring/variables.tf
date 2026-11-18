@@ -1,0 +1,11 @@
+variable "name" { type = string }
+variable "env" { type = string }
+variable "region" { type = string }
+variable "alert_email" { type = string }
+variable "ui_instance_id" { type = string }
+variable "api_instance_id" { type = string }
+variable "rds_identifier" { type = string }
+variable "public_lb_suffix" { type = string }
+variable "public_tg_suffix" { type = string }
+variable "internal_lb_suffix" { type = string }
+variable "internal_tg_suffix" { type = string }

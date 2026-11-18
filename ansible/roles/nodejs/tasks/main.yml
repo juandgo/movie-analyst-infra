@@ -1,0 +1,11 @@
+- name: Install Node.js and npm
+  ansible.builtin.dnf:
+    name: "{{ nodejs_packages }}"
+    state: present
+
+- name: Create the unprivileged service user
+  ansible.builtin.user:
+    name: "{{ app_user }}"
+    system: true
+    shell: /sbin/nologin
+    create_home: false

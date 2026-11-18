@@ -1,0 +1,4 @@
+# copy to terraform.tfvars (shared by both workspaces)
+allowed_ssh_cidr = "203.0.113.10/32" # your public IP
+alert_email      = "you@example.com"
+# public_key_path = "~/.ssh/id_ed25519.pub"

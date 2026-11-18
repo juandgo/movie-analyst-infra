@@ -1,0 +1,21 @@
+# Run from the bastion:  ansible-playbook -i inventories/qa.aws_ec2.yml site.yml
+- name: Baseline on all app instances
+  hosts: role_ui:role_api
+  become: true
+  roles:
+    - common
+
+- name: Back-end (API) and database schema
+  hosts: role_api
+  become: true
+  roles:
+    - nodejs
+    - api
+    - db_init
+
+- name: Front-end (UI)
+  hosts: role_ui
+  become: true
+  roles:
+    - nodejs
+    - ui

@@ -1,0 +1,27 @@
+- name: Install base packages
+  ansible.builtin.dnf:
+    name:
+      - git
+      - amazon-cloudwatch-agent
+    state: present
+
+- name: Render CloudWatch agent configuration
+  ansible.builtin.template:
+    src: cw-agent.json.j2
+    dest: /opt/aws/amazon-cloudwatch-agent/etc/movie-analyst.json
+    mode: "0644"
+  notify: Reload CloudWatch agent
+
+- name: Rotate application logs
+  ansible.builtin.copy:
+    dest: /etc/logrotate.d/movie-analyst
+    mode: "0644"
+    content: |
+      /var/log/movie-analyst-*.log {
+          daily
+          rotate 3
+          compress
+          missingok
+          notifempty
+          copytruncate
+      }

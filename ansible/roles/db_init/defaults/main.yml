@@ -1,0 +1,6 @@
+db_host: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/db/host', region=aws_region) }}"
+db_name: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/db/name', region=aws_region) }}"
+db_admin_user: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/db/admin_user', region=aws_region) }}"
+db_admin_password: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/db/admin_password', region=aws_region) }}"
+db_app_user: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/db/app_user', region=aws_region) }}"
+db_app_password: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix ~ '/db/app_password', region=aws_region) }}"

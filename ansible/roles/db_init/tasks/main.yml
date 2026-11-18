@@ -1,0 +1,59 @@
+# Runs on the API host (the only host allowed through the DB security group).
+- name: Install pip
+  ansible.builtin.dnf:
+    name: python3-pip
+    state: present
+
+- name: Install the Python MySQL driver used by the community.mysql modules
+  ansible.builtin.pip:
+    name:
+      - PyMySQL
+      - cryptography   # needed for MySQL 8.4's caching_sha2_password
+    executable: pip3
+
+- name: Create the schema
+  community.mysql.mysql_query:
+    login_host: "{{ db_host }}"
+    login_user: "{{ db_admin_user }}"
+    login_password: "{{ db_admin_password }}"
+    login_db: "{{ db_name }}"
+    query: "{{ lookup('ansible.builtin.file', 'schema.sql').split(';') | map('trim') | select | list }}"
+  no_log: true
+  run_once: true
+
+- name: Create the least-privilege application user
+  community.mysql.mysql_user:
+    login_host: "{{ db_host }}"
+    login_user: "{{ db_admin_user }}"
+    login_password: "{{ db_admin_password }}"
+    name: "{{ db_app_user }}"
+    password: "{{ db_app_password }}"
+    host: "%"
+    priv: "{{ db_name }}.*:SELECT,INSERT,UPDATE,DELETE"
+    state: present
+  no_log: true
+  run_once: true
+
+- name: Count seeded publications
+  community.mysql.mysql_query:
+    login_host: "{{ db_host }}"
+    login_user: "{{ db_admin_user }}"
+    login_password: "{{ db_admin_password }}"
+    login_db: "{{ db_name }}"
+    query: SELECT COUNT(*) AS n FROM publications
+  register: seed_count
+  no_log: true
+  run_once: true
+
+- name: Load seed data (only on an empty database)
+  ansible.builtin.command: node seeds.js
+  args:
+    chdir: /opt/movie-analyst-api
+  environment:
+    DB_HOST: "{{ db_host }}"
+    DB_NAME: "{{ db_name }}"
+    DB_USER: "{{ db_app_user }}"
+    DB_PASS: "{{ db_app_password }}"
+  when: seed_count.query_result[0][0].n | int == 0
+  no_log: true
+  run_once: true

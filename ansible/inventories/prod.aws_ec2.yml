@@ -1,0 +1,14 @@
+# Dynamic inventory: discovers this environment's instances through the EC2 API (bastion IAM role).
+plugin: amazon.aws.aws_ec2
+regions:
+  - us-east-1
+filters:
+  tag:Environment: prod
+  instance-state-name: running
+hostnames:
+  - private-ip-address
+keyed_groups:
+  - key: tags.Role      # -> groups role_ui, role_api, role_bastion, role_nat
+    prefix: role
+compose:
+  env_name: tags.Environment

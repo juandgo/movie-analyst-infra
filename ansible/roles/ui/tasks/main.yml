@@ -1,0 +1,43 @@
+- name: Clone the UI repository
+  ansible.builtin.git:
+    repo: "{{ ui_repo_url }}"
+    dest: /opt/movie-analyst-ui
+    version: "{{ ui_repo_version }}"
+    accept_hostkey: true
+  register: ui_git
+  notify: Restart UI
+
+- name: Check whether dependencies are installed
+  ansible.builtin.stat:
+    path: /opt/movie-analyst-ui/node_modules
+  register: ui_modules
+
+- name: Install UI dependencies
+  ansible.builtin.command: npm install --omit=dev --no-audit --no-fund
+  args:
+    chdir: /opt/movie-analyst-ui
+  when: ui_git.changed or not ui_modules.stat.exists
+  notify: Restart UI
+
+- name: Write the UI environment file
+  ansible.builtin.template:
+    src: ui.env.j2
+    dest: /etc/movie-analyst-ui.env
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Restart UI
+
+- name: Install the systemd unit
+  ansible.builtin.template:
+    src: movie-analyst-ui.service.j2
+    dest: /etc/systemd/system/movie-analyst-ui.service
+    mode: "0644"
+  notify: Restart UI
+
+- name: Enable and start the UI
+  ansible.builtin.systemd:
+    name: movie-analyst-ui
+    enabled: true
+    state: started
+    daemon_reload: true

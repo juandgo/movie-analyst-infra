@@ -1,0 +1,44 @@
+- name: Clone the API repository
+  ansible.builtin.git:
+    repo: "{{ api_repo_url }}"
+    dest: /opt/movie-analyst-api
+    version: "{{ api_repo_version }}"
+    accept_hostkey: true
+  register: api_git
+  notify: Restart API
+
+- name: Check whether dependencies are installed
+  ansible.builtin.stat:
+    path: /opt/movie-analyst-api/node_modules
+  register: api_modules
+
+- name: Install API dependencies
+  ansible.builtin.command: npm install --omit=dev --no-audit --no-fund
+  args:
+    chdir: /opt/movie-analyst-api
+  when: api_git.changed or not api_modules.stat.exists
+  notify: Restart API
+
+- name: Write the API environment file (secrets come from SSM Parameter Store)
+  ansible.builtin.template:
+    src: api.env.j2
+    dest: /etc/movie-analyst-api.env
+    owner: root
+    group: root
+    mode: "0600"
+  no_log: true
+  notify: Restart API
+
+- name: Install the systemd unit
+  ansible.builtin.template:
+    src: movie-analyst-api.service.j2
+    dest: /etc/systemd/system/movie-analyst-api.service
+    mode: "0644"
+  notify: Restart API
+
+- name: Enable and start the API
+  ansible.builtin.systemd:
+    name: movie-analyst-api
+    enabled: true
+    state: started
+    daemon_reload: true
