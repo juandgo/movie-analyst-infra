@@ -49,19 +49,19 @@ resource "aws_security_group" "ui" {
   vpc_id      = var.vpc_id
 
   ingress {
-    description = "App port from the public ALB"
-    from_port   = 3030
-    to_port     = 3030
-    protocol    = "tcp"
-    cidr_blocks = [aws_security_group.alb_public.id]
+    description     = "App port from the public ALB"
+    from_port       = 3030
+    to_port         = 3030
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb_public.id]
   }
 
   ingress {
-    description = "SSH from bastion"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [aws_security_group.bastion.id]
+    description     = "SSH from bastion"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [aws_security_group.bastion.id]
   }
 
   egress {
@@ -78,11 +78,11 @@ resource "aws_security_group" "alb_internal" {
   vpc_id      = var.vpc_id
 
   ingress {
-    description = "HTTP from the front-end only"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = [aws_security_group.ui.id]
+    description     = "HTTP from the front-end only"
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ui.id]
   }
 
   egress {
@@ -99,19 +99,19 @@ resource "aws_security_group" "api" {
   vpc_id      = var.vpc_id
 
   ingress {
-    description = "API port from the internal ALB"
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "tcp"
-    cidr_blocks = [aws_security_group.alb_internal.id]
+    description     = "API port from the internal ALB"
+    from_port       = 3000
+    to_port         = 3000
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb_internal.id]
   }
 
   ingress {
-    description = "SSH from bastion"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [aws_security_group.bastion.id]
+    description     = "SSH from bastion"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [aws_security_group.bastion.id]
   }
 
   egress {
@@ -128,11 +128,11 @@ resource "aws_security_group" "db" {
   vpc_id      = var.vpc_id
 
   ingress {
-    description = "MySQL from the API instance only"
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
-    cidr_blocks = [aws_security_group.api.id]
+    description     = "MySQL from the API instance only"
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [aws_security_group.api.id]
   }
 
   egress {
