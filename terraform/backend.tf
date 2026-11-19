@@ -3,7 +3,7 @@
 # Each workspace stores its state under: env:/<workspace>/movie-analyst/terraform.tfstate
 terraform {
   backend "s3" {
-    bucket       = "CHANGE-ME-movie-analyst-tfstate"
+    bucket       = "movie-analyst-tfstate-juang-2026"
     key          = "movie-analyst/terraform.tfstate"
     region       = "us-east-2"
     encrypt      = true

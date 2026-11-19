@@ -1,0 +1,48 @@
+cd ~/final-aws-epam/movie-analyst-infra
+cat > .gitignore <<'EOF'
+# Terraform local working data (downloaded providers, backend cache)
+**/.terraform/*
+
+# Terraform state (yours is remote in S3, but local copies can still appear)
+*.tfstate
+*.tfstate.*
+
+# Plan files and crash logs
+*.tfplan
+tfplan
+crash.log
+crash.*.log
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Your real variable values (IP and email). The .example file stays in git.
+terraform.tfvars
+*.auto.tfvars
+*.tfvars.json
+
+# CLI config that can hold credentials
+.terraformrc
+terraform.rc
+
+# Secrets and keys: never commit these
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+.env
+.env.*
+
+# Ansible
+*.retry
+.ansible/
+
+# Editor and OS files
+.vscode/
+.idea/
+*.swp
+.DS_Store
+EOF
