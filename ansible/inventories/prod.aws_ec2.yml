@@ -8,7 +8,7 @@ filters:
 hostnames:
   - private-ip-address
 keyed_groups:
-  - key: tags.Role      # -> groups role_ui, role_api, role_bastion, role_nat
+  - key: ec2_tags.Role      # -> groups role_ui, role_api, role_bastion, role_nat
     prefix: role
 compose:
-  env_name: tags.Environment
+  env_name: ec2_tags.Environment

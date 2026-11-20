@@ -1,21 +1,21 @@
 - name: Clone the UI repository
   ansible.builtin.git:
-    repo: "{{ ui_repo_url }}"
-    dest: /opt/movie-analyst-ui
-    version: "{{ ui_repo_version }}"
+    repo: "{{ app_repo_url }}"
+    dest: "{{ app_src_dir }}"
+    version: "{{ app_repo_version }}"
     accept_hostkey: true
   register: ui_git
   notify: Restart UI
 
 - name: Check whether dependencies are installed
   ansible.builtin.stat:
-    path: /opt/movie-analyst-ui/node_modules
+    path: "{{ app_src_dir }}/movie-analyst-ui/node_modules"
   register: ui_modules
 
 - name: Install UI dependencies
   ansible.builtin.command: npm install --omit=dev --no-audit --no-fund
   args:
-    chdir: /opt/movie-analyst-ui
+    chdir: "{{ app_src_dir }}/movie-analyst-ui"
   when: ui_git.changed or not ui_modules.stat.exists
   notify: Restart UI
 

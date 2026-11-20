@@ -48,7 +48,7 @@
 - name: Load seed data (only on an empty database)
   ansible.builtin.command: node seeds.js
   args:
-    chdir: /opt/movie-analyst-api
+    chdir: "{{ app_src_dir }}/movie-analyst-api"
   environment:
     DB_HOST: "{{ db_host }}"
     DB_NAME: "{{ db_name }}"

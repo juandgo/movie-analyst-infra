@@ -20,7 +20,7 @@ data "aws_iam_policy_document" "read_params" {
 
 data "aws_iam_policy_document" "describe_instances" {
   statement {
-    actions   = ["ec2:DescribeInstances", "ec2:DescribeTags"]
+    actions   = ["ec2:DescribeInstances", "ec2:DescribeTags", "ec2:DescribeAvailabilityZones", "ec2:DescribeRegions"]
     resources = ["*"]
   }
 }

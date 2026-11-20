@@ -5,7 +5,7 @@ Wants=network-online.target
 
 [Service]
 User={{ app_user }}
-WorkingDirectory=/opt/movie-analyst-ui
+WorkingDirectory={{ app_src_dir }}/movie-analyst-ui
 EnvironmentFile=/etc/movie-analyst-ui.env
 ExecStart={{ node_bin }} server.js
 Restart=always

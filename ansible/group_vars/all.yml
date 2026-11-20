@@ -7,8 +7,7 @@ nodejs_packages:
   - nodejs20
   - nodejs20-npm
 
-# Point these to YOUR repositories (the ones containing the fixes from app-fixes.patch)
-api_repo_url: https://github.com/juan-ruiz/movie-analyst-api.git
-api_repo_version: master
-ui_repo_url: https://github.com/juan-ruiz/movie-analyst-ui.git
-ui_repo_version: master
+# Application source: your fork of devops-rampup (both components live in one repo)
+app_repo_url: https://github.com/juandgo/devops-rampup.git
+app_repo_version: master
+app_src_dir: /opt/devops-rampup
